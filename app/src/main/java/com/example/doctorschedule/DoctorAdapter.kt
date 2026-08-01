@@ -12,8 +12,7 @@ class DoctorAdapter(private val doctorList: List<Doctor>) :
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nameTv: TextView = itemView.findViewById(R.id.tv_doctor_name)
         val specialtyTv: TextView = itemView.findViewById(R.id.tv_doctor_specialty)
-        val dayTv: TextView = itemView.findViewById(R.id.tv_doctor_day)
-        val timeTv: TextView = itemView.findViewById(R.id.tv_doctor_time)
+        val schedulesTv: TextView = itemView.findViewById(R.id.tv_doctor_schedules)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,9 +25,9 @@ class DoctorAdapter(private val doctorList: List<Doctor>) :
         val doctor = doctorList[position]
         holder.nameTv.text = doctor.name
         holder.specialtyTv.text = doctor.specialty
-        holder.dayTv.text = doctor.day
-        holder.timeTv.text = doctor.time
+        // هر نوبت در یک خط جداگانه
+        holder.schedulesTv.text = doctor.schedules.joinToString("\n")
     }
 
-    override fun getItemCount() = doctorList.size
-    }
+    override fun getItemCount(): Int = doctorList.size
+}
