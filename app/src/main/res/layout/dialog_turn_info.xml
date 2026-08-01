@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- عنوان روز و ساعت -->
+    <TextView
+        android:id="@+id/tv_turn_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="right"
+        android:layout_marginBottom="12dp" />
+
+    <!-- جدول -->
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1">
+
+        <TableRow
+            android:background="#E0E0E0"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="نوع نوبت"
+                android:textStyle="bold"
+                android:gravity="right" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="تعداد باقیمانده"
+                android:textStyle="bold"
+                android:gravity="left" />
+        </TableRow>
+
+        <!-- حضوری -->
+        <TableRow android:padding="8dp">
+            <TextView
+                android:id="@+id/tv_appoint_label"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="حضوری"
+                android:gravity="right" />
+
+            <TextView
+                android:id="@+id/tv_appoint_value"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="0"
+                android:gravity="left" />
+        </TableRow>
+
+        <!-- تلفنی -->
+        <TableRow android:padding="8dp">
+            <TextView
+                android:id="@+id/tv_tel_label"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="تلفنی"
+                android:gravity="right" />
+
+            <TextView
+                android:id="@+id/tv_tel_value"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="0"
+                android:gravity="left" />
+        </TableRow>
+
+        <!-- اینترنتی -->
+        <TableRow android:padding="8dp">
+            <TextView
+                android:id="@+id/tv_web_label"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="اینترنتی"
+                android:gravity="right" />
+
+            <TextView
+                android:id="@+id/tv_web_value"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="0"
+                android:gravity="left" />
+        </TableRow>
+
+    </TableLayout>
+
+</LinearLayout>
