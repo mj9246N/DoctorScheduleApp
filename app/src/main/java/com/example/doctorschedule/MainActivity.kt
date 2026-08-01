@@ -8,13 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
-
-    companion object {
-        var instance: MainActivity? = null
-            private set
-    }
 
     private lateinit var viewModel: DoctorViewModel
     private lateinit var recyclerView: RecyclerView
@@ -22,12 +18,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        instance = this
         setContentView(R.layout.activity_main)
 
         recyclerView = findViewById(R.id.recycler_doctors)
         progressBar = findViewById(R.id.progress_bar)
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        val fabRefresh = findViewById<FloatingActionButton>(R.id.fab_refresh)
 
         viewModel = ViewModelProvider(this)[DoctorViewModel::class.java]
 
@@ -41,10 +38,9 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "اطلاعاتی یافت نشد", Toast.LENGTH_SHORT).show()
             }
         }
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        instance = null
+        fabRefresh.setOnClickListener {
+            viewModel.loadDoctors()
+        }
     }
 }
