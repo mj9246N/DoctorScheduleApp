@@ -14,6 +14,17 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_clinic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#555555"
+            android:textSize="12sp"
+            android:background="#E0E0E0"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="2dp"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
             android:id="@+id/tv_doctor_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,15 +40,13 @@
             android:textColor="@color/gray"
             android:textSize="14sp" />
 
-        <!-- این TextView همه نوبت‌ها را با خط شکسته نشان می‌دهد -->
-        <TextView
-            android:id="@+id/tv_doctor_schedules"
+        <LinearLayout
+            android:id="@+id/schedules_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            android:lineSpacingExtra="4dp" />
+            android:orientation="vertical" />
+
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
