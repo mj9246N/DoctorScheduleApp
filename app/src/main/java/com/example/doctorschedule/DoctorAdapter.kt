@@ -62,15 +62,7 @@ class DoctorAdapter(private val doctorList: List<Doctor>) :
             withContext(Dispatchers.Main) {
                 progressDialog.dismiss()
                 if (info != null) {
-                    val message = "روز: ${schedule.day}\nساعت: ${schedule.time}\n\n" +
-                            "حضوری: ${info.appoint}\n" +
-                            "تلفنی: ${info.telAppoint}\n" +
-                            "اینترنتی: ${info.webAppoint}"
-                    AlertDialog.Builder(context)
-                        .setTitle("جزئیات نوبت")
-                        .setMessage(message)
-                        .setPositiveButton("بسیار خُب") { dialog, _ -> dialog.dismiss() }
-                        .show()
+                    showTurnInfoDialog(context, schedule, info)
                 } else {
                     AlertDialog.Builder(context)
                         .setMessage("خطا در دریافت اطلاعات")
@@ -79,5 +71,32 @@ class DoctorAdapter(private val doctorList: List<Doctor>) :
                 }
             }
         }
+    }
+
+    private fun showTurnInfoDialog(
+        context: android.content.Context,
+        schedule: Schedule,
+        info: TurnInfoService.TurnInfo
+    ) {
+        val dialogView = LayoutInflater.from(context)
+            .inflate(R.layout.dialog_turn_info, null)
+
+        val titleView: TextView = dialogView.findViewById(R.id.tv_turn_title)
+        val appointValue: TextView = dialogView.findViewById(R.id.tv_appoint_value)
+        val telValue: TextView = dialogView.findViewById(R.id.tv_tel_value)
+        val webValue: TextView = dialogView.findViewById(R.id.tv_web_value)
+
+        // تنظیم عنوان
+        titleView.text = "${schedule.day}، ${schedule.time}"
+
+        // پر کردن مقادیر
+        appointValue.text = info.appoint.toString()
+        telValue.text = info.telAppoint.toString()
+        webValue.text = info.webAppoint.toString()
+
+        AlertDialog.Builder(context)
+            .setView(dialogView)
+            .setPositiveButton("بسیار خُب") { dialog, _ -> dialog.dismiss() }
+            .show()
     }
 }
