@@ -1,5 +1,7 @@
 package com.example.doctorschedule
 
+import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import kotlinx.coroutines.Dispatchers
@@ -10,14 +12,19 @@ import kotlin.coroutines.resume
 object DynamicPageLoader {
 
     suspend fun loadRenderedHtml(url: String): String = withContext(Dispatchers.Main) {
+        val activity = MainActivity.instance
+            ?: throw IllegalStateException("MainActivity not available")
+
         suspendCancellableCoroutine { continuation ->
-            val context = App.context
-            val webView = WebView(context).apply {
+            val webView = WebView(activity).apply {
+                @SuppressLint("SetJavaScriptEnabled")
                 settings.javaScriptEnabled = true
-                setBackgroundColor(0x00000000)
-                isVerticalScrollBarEnabled = false
-                isHorizontalScrollBarEnabled = false
+                settings.domStorageEnabled = true
                 webViewClient = object : WebViewClient() {
+                    override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
+                        // no-op
+                    }
+
                     override fun onPageFinished(view: WebView, url: String) {
                         view.postDelayed({
                             view.evaluateJavascript(
@@ -29,7 +36,7 @@ object DynamicPageLoader {
                                 }
                                 view.destroy()
                             }
-                        }, 2500)
+                        }, 3000) // افزایش تأخیر به ۳ ثانیه
                     }
                 }
             }
