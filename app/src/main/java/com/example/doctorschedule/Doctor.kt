@@ -3,5 +3,12 @@ package com.example.doctorschedule
 data class Doctor(
     val name: String,
     val specialty: String,
-    val schedules: List<String>   // هر عضو مثل «چهارشنبه 14 مرداد (08:00-09:30)»
+    val clinic: String,
+    val schedules: List<Schedule>
+)
+
+data class Schedule(
+    val showId: Int,
+    val day: String,
+    val time: String
 )
