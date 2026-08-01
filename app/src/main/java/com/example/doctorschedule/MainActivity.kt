@@ -11,12 +11,18 @@ import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
 
+    companion object {
+        var instance: MainActivity? = null
+            private set
+    }
+
     private lateinit var viewModel: DoctorViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        instance = this
         setContentView(R.layout.activity_main)
 
         recyclerView = findViewById(R.id.recycler_doctors)
@@ -35,5 +41,10 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "اطلاعاتی یافت نشد", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        instance = null
     }
 }
