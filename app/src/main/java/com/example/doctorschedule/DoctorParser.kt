@@ -8,13 +8,13 @@ object DoctorParser {
 
     fun parseDoctors(html: String): List<Doctor> {
         val doc: Document = Jsoup.parse(html)
-        val cards: List<Element> = doc.select("div.k-card")
+        val cards: List<Element> = doc.select("div.card-deck div.card")
         val doctors = mutableListOf<Doctor>()
 
         for (card in cards) {
-            val name = card.selectFirst("h6")?.text()?.trim() ?: continue
-            val specialty = card.selectFirst("small")?.text()?.trim() ?: ""
-            val scheduleItems = card.select("ul.list-unstyled li")
+            val name = card.selectFirst("div.card-body div.card-title h6")?.text()?.trim() ?: continue
+            val specialty = card.selectFirst("div.card-body div.card-title small")?.text()?.trim() ?: ""
+            val scheduleItems = card.select("div.card-body div.mt-2 ul.list-unstyled li a small.d-block")
             for (item in scheduleItems) {
                 val fullText = item.text().trim()
                 val regex = Regex("""^(.+?)\s*\((.+?)\)$""")
@@ -33,9 +33,10 @@ object DoctorParser {
 
     fun parsePageCount(html: String): Int {
         val doc = Jsoup.parse(html)
-        val pagerText = doc.select("div.k-pager-wrap").text()
-        val regex = Regex("""صفحه\s+\d+\s+از\s+(\d+)""")
+        // استخراج از «1 از 2» درون span های badge
+        val pagerText = doc.select("div.paging span").text()
+        val regex = Regex("""(\d+)\s+از\s+(\d+)""")
         val match = regex.find(pagerText)
-        return match?.groupValues?.get(1)?.toIntOrNull() ?: 1
+        return match?.groupValues?.get(2)?.toIntOrNull() ?: 1
     }
 }
