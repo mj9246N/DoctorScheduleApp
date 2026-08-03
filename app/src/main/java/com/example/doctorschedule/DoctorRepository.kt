@@ -1,6 +1,5 @@
 package com.example.doctorschedule
 
-import org.jsoup.Jsoup
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -21,11 +20,5 @@ object DoctorRepository {
             }
         }
         allDoctors
-    }
-
-    suspend fun getStartDate(): String = withContext(Dispatchers.IO) {
-        val html = NetworkClient.fetchHtml(BASE_URL) ?: return@withContext ""
-        val doc = Jsoup.parse(html)
-        doc.selectFirst("input#StartDate")?.attr("value") ?: ""
     }
 }
