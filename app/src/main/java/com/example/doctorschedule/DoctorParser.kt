@@ -6,15 +6,6 @@ import org.jsoup.nodes.Element
 
 object DoctorParser {
 
-    data class DateRange(val start: String, val end: String)
-
-    fun parseDateRange(html: String): DateRange {
-        val doc = Jsoup.parse(html)
-        val start = doc.selectFirst("input#StartDate")?.attr("value") ?: ""
-        val end = doc.selectFirst("input#EndDate")?.attr("value") ?: ""
-        return DateRange(start, end)
-    }
-
     fun parseDoctors(html: String): List<Doctor> {
         val doc: Document = Jsoup.parse(html)
         val cards: List<Element> = doc.select("div.card-deck div.card")
@@ -36,18 +27,22 @@ object DoctorParser {
 
             for (aTag in scheduleItems) {
                 val smallBlock = aTag.selectFirst("small.d-block") ?: continue
-                val fullText = smallBlock.text().trim()
+                val fullText = smallBlock.text().trim()   // "چهارشنبه 14 مرداد (08:00-09:30)"
                 val onclick = aTag.attr("onclick") ?: ""
                 val idRegex = Regex("""getTurnInfo\((\d+)""")
                 val idMatch = idRegex.find(onclick)
                 val showId = idMatch?.groupValues?.get(1)?.toIntOrNull() ?: continue
 
-                val scheduleRegex = Regex("""^(.+?)\s*\((.+?)\)$""")
-                val scheduleMatch = scheduleRegex.find(fullText)
-                if (scheduleMatch != null) {
-                    val day = scheduleMatch.groupValues[1].trim()
-                    val time = scheduleMatch.groupValues[2].trim()
+                // extract day and time using regex
+                val regex = Regex("""^(.+?)\s*\((.+?)\)$""")
+                val match = regex.find(fullText)
+                if (match != null) {
+                    val day = match.groupValues[1].trim()
+                    val time = match.groupValues[2].trim()
                     schedules.add(Schedule(showId, day, time))
+                } else {
+                    // fallback: just put the whole text as day and empty time
+                    schedules.add(Schedule(showId, fullText, ""))
                 }
             }
         }
