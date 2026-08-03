@@ -2,8 +2,8 @@ package com.example.doctorschedule
 
 import android.os.Bundle
 import android.view.View
-import android.view.animation.AnimationUtils
 import android.widget.ProgressBar
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +19,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var fabRefresh: FloatingActionButton
     private lateinit var fabSpeaker: FloatingActionButton
+    private lateinit var btnAll: Button
+    private lateinit var btnToday: Button
+
+    private var currentTab: String = "all" // or "today"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,55 +32,42 @@ class MainActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progress_bar)
         fabRefresh = findViewById(R.id.fab_refresh)
         fabSpeaker = findViewById(R.id.fab_speaker)
+        btnAll = findViewById(R.id.btn_all)
+        btnToday = findViewById(R.id.btn_today)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         viewModel = ViewModelProvider(this)[DoctorViewModel::class.java]
 
-        val adapter = DoctorAdapter(emptyList(), emptyList())
-        recyclerView.adapter = adapter
-
         viewModel.isLoading.observe(this) { loading ->
             progressBar.visibility = if (loading) View.VISIBLE else View.GONE
         }
 
-        viewModel.dateRange.observe(this) { range ->
-            // آپدیت هدر تاریخ (اولین آیتم)
-            val dateHeaderHolder = (recyclerView.findViewHolderForAdapterPosition(0)
-                as? DoctorAdapter.DateHeaderHolder)
-            dateHeaderHolder?.tvDateRange?.text = "از ${range.start} تا ${range.end}"
+        viewModel.allDoctors.observe(this) { all ->
+            if (currentTab == "all") {
+                recyclerView.adapter = DoctorAdapter(all)
+            }
         }
 
         viewModel.todayDoctors.observe(this) { today ->
-            viewModel.doctors.observe(this) { all ->
-                val newAdapter = DoctorAdapter(today, all)
-                recyclerView.adapter = newAdapter
-                // دوباره dateRange را ست کن
-                viewModel.dateRange.observe(this) { range ->
-                    val dateHeaderHolder = (recyclerView.findViewHolderForAdapterPosition(0)
-                        as? DoctorAdapter.DateHeaderHolder)
-                    dateHeaderHolder?.tvDateRange?.text = "از ${range.start} تا ${range.end}"
-                }
+            if (currentTab == "today") {
+                recyclerView.adapter = DoctorAdapter(today)
             }
         }
 
-        // انیمیشن تپش برای دکمه بلندگو
-        val pulse = AnimationUtils.loadAnimation(this, R.anim.pulse)
-        fabSpeaker.startAnimation(pulse)
-
-        // مخفی‌سازی دکمه‌ها هنگام اسکرول به انتها
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val cannotScrollDown = !recyclerView.canScrollVertically(1)
-                if (cannotScrollDown) {
-                    fabRefresh.hide()
-                    fabSpeaker.hide()
-                } else {
-                    fabRefresh.show()
-                    fabSpeaker.show()
-                }
+        btnAll.setOnClickListener {
+            currentTab = "all"
+            viewModel.allDoctors.value?.let {
+                recyclerView.adapter = DoctorAdapter(it)
             }
-        })
+        }
+
+        btnToday.setOnClickListener {
+            currentTab = "today"
+            viewModel.todayDoctors.value?.let {
+                recyclerView.adapter = DoctorAdapter(it)
+            }
+        }
 
         fabRefresh.setOnClickListener {
             viewModel.loadAll()
@@ -85,22 +76,29 @@ class MainActivity : AppCompatActivity() {
         fabSpeaker.setOnClickListener {
             showMessagesDialog()
         }
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    fabRefresh.hide()
+                    fabSpeaker.hide()
+                } else {
+                    fabRefresh.show()
+                    fabSpeaker.show()
+                }
+            }
+        })
     }
 
     private fun showMessagesDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_messages, null)
         val recyclerMessages = dialogView.findViewById<RecyclerView>(R.id.recycler_messages)
-        val btnRefreshMessages = dialogView.findViewById<android.widget.Button>(R.id.btn_refresh_messages)
-
-        // در آینده می‌توانید اینجا پیام‌ها را از Cloudflare Worker بگیرید
+        val btnRefreshMessages = dialogView.findViewById<Button>(R.id.btn_refresh_messages)
         recyclerMessages.layoutManager = LinearLayoutManager(this)
         recyclerMessages.adapter = MessageAdapter(emptyList())
-
         btnRefreshMessages.setOnClickListener {
-            // درخواست به سرور پیام‌ها
             Toast.makeText(this, "در حال بروزرسانی پیام‌ها...", Toast.LENGTH_SHORT).show()
         }
-
         AlertDialog.Builder(this)
             .setView(dialogView)
             .setPositiveButton("بستن", null)
