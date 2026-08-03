@@ -1,9 +1,11 @@
 package com.example.doctorschedule
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
-import android.widget.Button
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -19,10 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var fabRefresh: FloatingActionButton
     private lateinit var fabSpeaker: FloatingActionButton
-    private lateinit var btnAll: Button
-    private lateinit var btnToday: Button
-
-    private var currentTab: String = "all"
+    private lateinit var officialMessageView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +31,7 @@ class MainActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progress_bar)
         fabRefresh = findViewById(R.id.fab_refresh)
         fabSpeaker = findViewById(R.id.fab_speaker)
-        btnAll = findViewById(R.id.btn_all)
-        btnToday = findViewById(R.id.btn_today)
+        officialMessageView = findViewById(R.id.tv_official_message)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -43,34 +41,26 @@ class MainActivity : AppCompatActivity() {
             progressBar.visibility = if (loading) View.VISIBLE else View.GONE
         }
 
-        viewModel.allDoctors.observe(this) { all ->
-            if (currentTab == "all") {
-                recyclerView.adapter = DoctorAdapter(all)
+        viewModel.doctors.observe(this) { doctors ->
+            recyclerView.adapter = DoctorAdapter(doctors)
+            if (doctors.isEmpty()) {
+                Toast.makeText(this, "اطلاعاتی یافت نشد", Toast.LENGTH_SHORT).show()
             }
         }
 
-        viewModel.todayDoctors.observe(this) { today ->
-            if (currentTab == "today") {
-                recyclerView.adapter = DoctorAdapter(today)
-            }
-        }
-
-        btnAll.setOnClickListener {
-            currentTab = "all"
-            viewModel.allDoctors.value?.let {
-                recyclerView.adapter = DoctorAdapter(it)
-            }
-        }
-
-        btnToday.setOnClickListener {
-            currentTab = "today"
-            viewModel.todayDoctors.value?.let {
-                recyclerView.adapter = DoctorAdapter(it)
-            }
-        }
+        // پیام رسمی موقت (بعد از ۳ دقیقه محو می‌شود)
+        showOfficialMessage("لطفاً چند بار دکمهٔ بروزرسانی را بزنید")
+        Handler(Looper.getMainLooper()).postDelayed({
+            officialMessageView.visibility = View.GONE
+        }, 180_000) // ۳ دقیقه
 
         fabRefresh.setOnClickListener {
-            viewModel.loadAll()
+            viewModel.loadDoctors()
+            // هر بار رفرش، پیام رسمی را دوباره فعال کن (اختیاری)
+            officialMessageView.visibility = View.VISIBLE
+            Handler(Looper.getMainLooper()).postDelayed({
+                officialMessageView.visibility = View.GONE
+            }, 180_000)
         }
 
         fabSpeaker.setOnClickListener {
@@ -93,15 +83,35 @@ class MainActivity : AppCompatActivity() {
     private fun showMessagesDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_messages, null)
         val recyclerMessages = dialogView.findViewById<RecyclerView>(R.id.recycler_messages)
-        val btnRefreshMessages = dialogView.findViewById<Button>(R.id.btn_refresh_messages)
+        val btnRefreshMessages = dialogView.findViewById<android.widget.Button>(R.id.btn_refresh_messages)
+
         recyclerMessages.layoutManager = LinearLayoutManager(this)
-        recyclerMessages.adapter = MessageAdapter(emptyList())
+        val adapter = MessageAdapter(emptyList())
+        recyclerMessages.adapter = adapter
+
+        // بارگذاری پیام‌ها از Worker
+        loadMessages(adapter)
+
         btnRefreshMessages.setOnClickListener {
-            Toast.makeText(this, "در حال بروزرسانی پیام‌ها...", Toast.LENGTH_SHORT).show()
+            loadMessages(adapter)
         }
+
         AlertDialog.Builder(this)
             .setView(dialogView)
             .setPositiveButton("بستن", null)
             .show()
+    }
+
+    private fun loadMessages(adapter: MessageAdapter) {
+        MessageService.fetchMessages { messages ->
+            runOnUiThread {
+                adapter.updateMessages(messages)
+            }
+        }
+    }
+
+    private fun showOfficialMessage(text: String) {
+        officialMessageView.text = text
+        officialMessageView.visibility = View.VISIBLE
     }
 }
