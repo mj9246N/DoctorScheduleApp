@@ -2,8 +2,8 @@ package com.example.doctorschedule
 
 import android.os.Bundle
 import android.view.View
-import android.widget.ProgressBar
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnAll: Button
     private lateinit var btnToday: Button
 
-    private var currentTab: String = "all" // or "today"
+    private var currentTab: String = "all"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
