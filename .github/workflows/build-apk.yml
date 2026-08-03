@@ -25,6 +25,8 @@ jobs:
         gradle-version: 8.2
 
     - name: Build debug APK
+      env:
+        WORKER_URL: ${{ secrets.WORKER_URL }}
       run: gradle assembleDebug
 
     - name: Upload APK
