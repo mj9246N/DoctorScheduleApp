@@ -1,16 +1,17 @@
 package com.example.doctorschedule
 
 import org.json.JSONArray
-import org.json.JSONObject
 
 object MessageService {
-    // آدرس Worker خود را جایگزین کنید
-    private const val WORKER_URL = "https://your-worker.your-subdomain.workers.dev"
-
     fun fetchMessages(callback: (List<String>) -> Unit) {
+        val workerUrl = BuildConfig.WORKER_URL
+        if (workerUrl.isBlank()) {
+            callback(emptyList())
+            return
+        }
         Thread {
             try {
-                val html = NetworkClient.fetchHtml("$WORKER_URL/messages")
+                val html = NetworkClient.fetchHtml("${workerUrl}/messages")
                 if (html != null) {
                     val jsonArray = JSONArray(html)
                     val list = mutableListOf<String>()
