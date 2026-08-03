@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -12,10 +12,7 @@
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_centerInParent="true" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_doctors"
@@ -23,17 +20,29 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:padding="8dp" />
+    </RelativeLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+    <!-- دکمه بروزرسانی اصلی -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
+        android:layout_gravity="bottom|center_horizontal"
         android:layout_margin="16dp"
         android:contentDescription="بروزرسانی"
         app:srcCompat="@android:drawable/ic_popup_sync"
         app:backgroundTint="#1976D2" />
 
+    <!-- دکمه بلندگو (پیام‌ها) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_speaker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="پیام‌ها"
+        app:srcCompat="@android:drawable/ic_lock_silent_mode_off"
+        app:backgroundTint="#FFA000"
+        android:scaleX="1.0"
+        android:scaleY="1.0" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
