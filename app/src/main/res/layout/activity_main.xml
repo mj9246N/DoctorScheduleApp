@@ -28,7 +28,7 @@
         </FrameLayout>
     </LinearLayout>
 
-    <!-- پیام رسمی موقت -->
+    <!-- پیام رسمی موقت (یادآوری) -->
     <TextView
         android:id="@+id/tv_official_message"
         android:layout_width="match_parent"
@@ -42,6 +42,7 @@
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="80dp" />
 
+    <!-- دکمهٔ بروزرسانی -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_refresh"
         android:layout_width="wrap_content"
@@ -52,6 +53,7 @@
         app:srcCompat="@android:drawable/ic_popup_sync"
         app:backgroundTint="#1976D2" />
 
+    <!-- دکمهٔ بلندگو (پیام‌ها) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_speaker"
         android:layout_width="wrap_content"
@@ -61,4 +63,19 @@
         android:contentDescription="پیام‌ها"
         app:srcCompat="@android:drawable/ic_lock_silent_mode_off"
         app:backgroundTint="#FFA000" />
+
+    <!-- کبوتر آرامش‌بخش (🕊️) -->
+    <TextView
+        android:id="@+id/floating_dove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🕊️"
+        android:textSize="32sp"
+        android:alpha="0.0"
+        android:clickable="false"
+        android:focusable="false"
+        android:importantForAccessibility="no"
+        android:layout_gravity="top|start"
+        android:padding="16dp" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
