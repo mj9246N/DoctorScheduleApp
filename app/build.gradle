@@ -14,7 +14,10 @@ android {
         versionCode 1
         versionName "1.0"
 
-        // افزودن این خط برای تزریق آدرس Worker از متغیر محیطی
+        // فعال‌سازی BuildConfig و افزودن فیلد WORKER_URL
+        buildFeatures {
+            buildConfig = true
+        }
         buildConfigField "String", "WORKER_URL", "\"${System.getenv("WORKER_URL") ?: ""}\""
     }
 
