@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         showOfficialMessage("حتماً پیش از مراجعه، برنامه را بروزرسانی کنید")
         Handler(Looper.getMainLooper()).postDelayed({
             officialMessageView.visibility = View.GONE
-        }, 15_000)
+        }, 5_000)
 
         fabRefresh.setOnClickListener {
             viewModel.loadDoctors()
