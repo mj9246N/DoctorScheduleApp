@@ -9,6 +9,6 @@ data class Doctor(
 
 data class Schedule(
     val showId: Int,
-    val day: String,
-    val time: String
+    val day: String,   // e.g., "شنبه 10 مرداد"
+    val time: String   // e.g., "08:00-09:30"
 )
