@@ -48,19 +48,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // پیام رسمی موقت (بعد از ۳ دقیقه محو می‌شود)
-        showOfficialMessage("لطفاً چند بار دکمهٔ بروزرسانی را بزنید")
+        // پیام رسمی موقت فقط یک‌بار در شروع برنامه (بعد از ۱۵ ثانیه ناپدید می‌شود)
+        showOfficialMessage("حتماً پیش از مراجعه، برنامه را بروزرسانی کنید")
         Handler(Looper.getMainLooper()).postDelayed({
             officialMessageView.visibility = View.GONE
-        }, 180_000) // ۳ دقیقه
+        }, 15_000)
 
         fabRefresh.setOnClickListener {
             viewModel.loadDoctors()
-            // هر بار رفرش، پیام رسمی را دوباره فعال کن (اختیاری)
-            officialMessageView.visibility = View.VISIBLE
-            Handler(Looper.getMainLooper()).postDelayed({
-                officialMessageView.visibility = View.GONE
-            }, 180_000)
+            // دیگر پیام رسمی تکرار نمی‌شود
         }
 
         fabSpeaker.setOnClickListener {
@@ -89,7 +85,6 @@ class MainActivity : AppCompatActivity() {
         val adapter = MessageAdapter(emptyList())
         recyclerMessages.adapter = adapter
 
-        // بارگذاری پیام‌ها از Worker
         loadMessages(adapter)
 
         btnRefreshMessages.setOnClickListener {
