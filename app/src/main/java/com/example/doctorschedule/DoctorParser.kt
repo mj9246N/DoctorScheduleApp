@@ -6,6 +6,15 @@ import org.jsoup.nodes.Element
 
 object DoctorParser {
 
+    data class DateRange(val start: String, val end: String)
+
+    fun parseDateRange(html: String): DateRange {
+        val doc = Jsoup.parse(html)
+        val start = doc.selectFirst("input#StartDate")?.attr("value") ?: ""
+        val end = doc.selectFirst("input#EndDate")?.attr("value") ?: ""
+        return DateRange(start, end)
+    }
+
     fun parseDoctors(html: String): List<Doctor> {
         val doc: Document = Jsoup.parse(html)
         val cards: List<Element> = doc.select("div.card-deck div.card")
