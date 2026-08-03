@@ -27,19 +27,25 @@ object DoctorParser {
 
             for (aTag in scheduleItems) {
                 val smallBlock = aTag.selectFirst("small.d-block") ?: continue
-                val fullText = smallBlock.text().trim()   // "چهارشنبه 14 مرداد (08:00-09:30)"
+                val fullText = smallBlock.text().trim()
                 val onclick = aTag.attr("onclick") ?: ""
+
+                // استخراج showId
+                var showId = -1
                 val idRegex = Regex("""getTurnInfo\((\d+)""")
                 val idMatch = idRegex.find(onclick)
-                val showId = idMatch?.groupValues?.get(1)?.toIntOrNull() ?: continue
+                if (idMatch != null) {
+                    showId = idMatch.groupValues[1].toIntOrNull() ?: -1
+                }
 
-                val regex = Regex("""^(.+?)\s*\((.+?)\)$""")
-                val match = regex.find(fullText)
-                if (match != null) {
-                    val day = match.groupValues[1].trim()
-                    val time = match.groupValues[2].trim()
+                // جدا کردن روز و ساعت با آخرین پرانتز
+                val lastOpenParen = fullText.lastIndexOf('(')
+                if (lastOpenParen >= 0 && fullText.endsWith(')')) {
+                    val day = fullText.substring(0, lastOpenParen).trim()
+                    val time = fullText.substring(lastOpenParen + 1, fullText.length - 1).trim()
                     schedules.add(Schedule(showId, day, time))
                 } else {
+                    // فرمت غیرمنتظره: کل متن را روز در نظر می‌گیریم
                     schedules.add(Schedule(showId, fullText, ""))
                 }
             }
