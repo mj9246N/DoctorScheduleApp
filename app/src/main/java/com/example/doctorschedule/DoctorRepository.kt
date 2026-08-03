@@ -4,8 +4,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object DoctorRepository {
-    // تاریخ‌های پیش‌فرض مطابق با سایت برای دریافت همهٔ پزشکان
-    private const val BASE_URL = "https://nobatsh.abadanums.ac.ir/QueueWeb/DoctorSchedule?StartDate=1405/05/10&EndDate=1405/05/16"
+    // بدون پارامتر تاریخ؛ سایت خودش هفته جاری را برمی‌گرداند
+    private const val BASE_URL = "https://nobatsh.abadanums.ac.ir/QueueWeb/DoctorSchedule"
 
     suspend fun getAllDoctors(): List<Doctor> = withContext(Dispatchers.IO) {
         val firstHtml = NetworkClient.fetchHtml(BASE_URL) ?: return@withContext emptyList()
@@ -14,7 +14,7 @@ object DoctorRepository {
 
         if (totalPages > 1) {
             for (page in 2..totalPages) {
-                val pageUrl = "https://nobatsh.abadanums.ac.ir/QueueWeb/DoctorSchedule?StartDate=1405/05/10&EndDate=1405/05/16&page=$page"
+                val pageUrl = "$BASE_URL?page=$page"
                 val pageHtml = NetworkClient.fetchHtml(pageUrl)
                 if (pageHtml != null) {
                     allDoctors.addAll(DoctorParser.parseDoctors(pageHtml))
@@ -22,5 +22,10 @@ object DoctorRepository {
             }
         }
         allDoctors
+    }
+
+    suspend fun getDateRange(): DoctorParser.DateRange = withContext(Dispatchers.IO) {
+        val html = NetworkClient.fetchHtml(BASE_URL) ?: return@withContext DoctorParser.DateRange("", "")
+        DoctorParser.parseDateRange(html)
     }
 }
