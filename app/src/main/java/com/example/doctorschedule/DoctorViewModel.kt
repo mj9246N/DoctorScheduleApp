@@ -7,14 +7,11 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 class DoctorViewModel : ViewModel() {
-    private val _doctors = MutableLiveData<List<Doctor>>()
-    val doctors: LiveData<List<Doctor>> = _doctors
+    private val _allDoctors = MutableLiveData<List<Doctor>>()
+    val allDoctors: LiveData<List<Doctor>> = _allDoctors
 
     private val _todayDoctors = MutableLiveData<List<Doctor>>()
     val todayDoctors: LiveData<List<Doctor>> = _todayDoctors
-
-    private val _dateRange = MutableLiveData<DoctorParser.DateRange>()
-    val dateRange: LiveData<DoctorParser.DateRange> = _dateRange
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -26,17 +23,16 @@ class DoctorViewModel : ViewModel() {
             _isLoading.value = true
             try {
                 val doctors = DoctorRepository.getAllDoctors()
+                _allDoctors.value = doctors
+
                 val todayStr = PersianDateUtil.getTodayShamsi()
-                // فیلتر پزشکانی که حداقل یک نوبت امروز دارند
                 val todayList = doctors.mapNotNull { doctor ->
                     val todaySchedules = doctor.schedules.filter { it.day == todayStr }
                     if (todaySchedules.isNotEmpty()) doctor.copy(schedules = todaySchedules) else null
                 }
-                _doctors.value = doctors
                 _todayDoctors.value = todayList
-                _dateRange.value = DoctorRepository.getDateRange()
             } catch (e: Exception) {
-                _doctors.value = emptyList()
+                _allDoctors.value = emptyList()
                 _todayDoctors.value = emptyList()
             } finally {
                 _isLoading.value = false
