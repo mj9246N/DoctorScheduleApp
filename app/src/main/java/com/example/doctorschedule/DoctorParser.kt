@@ -33,7 +33,6 @@ object DoctorParser {
                 val idMatch = idRegex.find(onclick)
                 val showId = idMatch?.groupValues?.get(1)?.toIntOrNull() ?: continue
 
-                // extract day and time using regex
                 val regex = Regex("""^(.+?)\s*\((.+?)\)$""")
                 val match = regex.find(fullText)
                 if (match != null) {
@@ -41,7 +40,6 @@ object DoctorParser {
                     val time = match.groupValues[2].trim()
                     schedules.add(Schedule(showId, day, time))
                 } else {
-                    // fallback: just put the whole text as day and empty time
                     schedules.add(Schedule(showId, fullText, ""))
                 }
             }
