@@ -13,9 +13,7 @@ object PersianDateUtil {
         val gy = cal.get(Calendar.YEAR)
         val gm = cal.get(Calendar.MONTH) + 1
         val gd = cal.get(Calendar.DAY_OF_MONTH)
-        val jy = gy - 621
-        val jm: Int
-        val jd: Int
+        var jy = gy - 621  // توجه: var
         var days = 0
         val gDaysInMonth = intArrayOf(0,31, if (isLeap(gy)) 29 else 28,31,30,31,30,31,31,30,31,30,31)
         for (i in 1 until gm) days += gDaysInMonth[i]
@@ -33,14 +31,16 @@ object PersianDateUtil {
         val jmFinal = jmIndex
         val jdFinal = days
         val dayOfWeek = cal.get(Calendar.DAY_OF_WEEK)
-        // تبدیل روز هفته میلادی به شمسی (جمعه = 7)
-        val shamsiDayIndex = if (dayOfWeek == Calendar.SATURDAY) 0
-                        else if (dayOfWeek == Calendar.SUNDAY) 1
-                        else if (dayOfWeek == Calendar.MONDAY) 2
-                        else if (dayOfWeek == Calendar.TUESDAY) 3
-                        else if (dayOfWeek == Calendar.WEDNESDAY) 4
-                        else if (dayOfWeek == Calendar.THURSDAY) 5
-                        else 6
+        // تبدیل روز هفته میلادی به شمسی (شنبه = 0)
+        val shamsiDayIndex = when (dayOfWeek) {
+            Calendar.SATURDAY -> 0
+            Calendar.SUNDAY -> 1
+            Calendar.MONDAY -> 2
+            Calendar.TUESDAY -> 3
+            Calendar.WEDNESDAY -> 4
+            Calendar.THURSDAY -> 5
+            else -> 6 // جمعه
+        }
         return "${weekDays[shamsiDayIndex]} $jdFinal ${months[jmFinal-1]}"
     }
 
