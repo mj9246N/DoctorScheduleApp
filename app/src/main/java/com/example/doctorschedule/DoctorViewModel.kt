@@ -25,7 +25,9 @@ class DoctorViewModel : ViewModel() {
                 val doctors = DoctorRepository.getAllDoctors()
                 _allDoctors.value = doctors
 
-                val todayStr = PersianDateUtil.getTodayShamsi()
+                // تاریخ امروز را از روی StartDate سایت می‌سازیم
+                val startDate = DoctorRepository.getStartDate()
+                val todayStr = PersianDateUtil.getTodayShamsi(startDate)
                 val todayList = doctors.mapNotNull { doctor ->
                     val todaySchedules = doctor.schedules.filter { it.day == todayStr }
                     if (todaySchedules.isNotEmpty()) doctor.copy(schedules = todaySchedules) else null
